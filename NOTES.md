@@ -53,7 +53,7 @@ Updated for Instagram 439.0.0.
 - Auto close the Instants viewer once you've seen them all
 
 #### Downloads & Gallery
-- The download manager got a rebuild — thumbnails for finished media, live size, speed and time left, a filter row, and swipe a row to cancel, retry or remove
+- Download manager got a rebuild — thumbnails for finished media, live size, speed and time left, a filter row, and swipe a row to cancel, retry or remove
 - Downloads now stay listed after you close the app and can be downloaded again from the history — kept from 12 hours up to forever, and cleared or exported from Backup and Storage
 - Download quality picker has an advanced view — download a video with no audio, or pick any of its audio tracks
 - Gallery — import your own photos, videos and files from the ••• menu, saved under an Imported filter
