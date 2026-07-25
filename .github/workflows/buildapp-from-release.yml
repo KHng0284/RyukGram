@@ -129,6 +129,9 @@ jobs:
                 DEB="$(ls -t release-assets/$DEBP 2>/dev/null | head -n1 || true)"
                 [ -n "$DEB" ] || { echo "::error::Rootless .deb ($DEBP) not found in release $TAG."; exit 1; }
                 echo "DEB=${DEB}" >> "$GITHUB_ENV"
+                IG_VER="$(basename "$DEB" | sed -nE 's/.*_IG(.*)_rootless\.deb$/\1/p')"
+                [ -n "$IG_VER" ] || IG_VER=unknown
+                echo "IG_VER=${IG_VER}" >> "$GITHUB_ENV"
 
                 if [ "${{ inputs.build_sideload }}" = "true" ]; then
                   gh release download "$TAG" --repo "$UPSTREAM_REPO" --dir release-assets \
@@ -225,7 +228,7 @@ jobs:
                   --inplace --noconfirm \
                   --dylib packages/zxPluginsInject.dylib
 
-                mv packages/RyukGram-sideloaded.ipa "packages/RyukGram_sideloaded_v${VERSION}${SUF}.ipa"
+                mv packages/RyukGram-sideloaded.ipa "packages/RyukGram_sideload_v${VERSION}_IG${IG_VER}.ipa"
                 ls -la packages
 
             - name: Build no-plugins IPA (cyan + NoPluginsPatch, appex stripped)
@@ -257,8 +260,8 @@ jobs:
                 fi
                 rm -rf "$INJECT_TMP"
 
-                OUT="RyukGram_noplugins_v${VERSION}${SUF}.ipa"
-                [ -n "$DUP_ID" ] && OUT="RyukGram_noplugins_dup_v${VERSION}${SUF}.ipa"
+                OUT="RyukGram_noplugins_v${VERSION}_IG${IG_VER}.ipa"
+                [ -n "$DUP_ID" ] && OUT="RyukGram_noplugins_v${VERSION}_IG${IG_VER}-dup.ipa"
                 mv packages/RyukGram-noplugins.ipa "packages/${OUT}"
                 ls -la packages
 
@@ -266,8 +269,8 @@ jobs:
               if: ${{ inputs.upload_artifact && inputs.build_sideload }}
               uses: actions/upload-artifact@v4
               with:
-                name: RyukGram_sideloaded_v${{ steps.tag.outputs.version }}
-                path: packages/RyukGram_sideloaded_v*.ipa
+                name: RyukGram_sideload_v${{ steps.tag.outputs.version }}
+                path: packages/RyukGram_sideload_v*.ipa
                 if-no-files-found: error
 
             - name: Upload no-plugins IPA artifact
